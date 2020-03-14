@@ -1,33 +1,3 @@
-const { admin, db } = require('firebase-admin');
-
-module.exports = async (req, res, next) => {
-  try {
-    let idToken;
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith('Bearer ')
-    ) {
-      idToken = req.headers.authorization.split('Bearer ')[1];
-    } else {
-      console.error('No token found');
-      return res.status(403).send({ error: 'No token found' });
-    }
-
-    let foundToken = await admin.auth().verifyIdToken(idToken);
-    req.user = foundToken;
-    const data = await db
-      .collection('users')
-      .where('userId', '==', req.user.uid)
-      .limit(1)
-      .get();
-    req.user.userName = data.docs[0].data().userName;
-    return next();
-  } catch (error) {
-    console.error('Error while verifying token', error);
-    return res.status(403).json(error);
-  }
-};
-
 //Helper functions
 const isEmpty = str => {
   if (str.trim() === '') {

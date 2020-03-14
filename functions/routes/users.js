@@ -1,8 +1,8 @@
 const { db } = require('../admin.js');
 const firebase = require('firebase');
+const { validateSignupData, validateLoginData } = require('../valitdation.js');
 const firebaseConfig = require('../config');
 firebase.initializeApp(firebaseConfig);
-const { validateSignupData, validateLoginData } = require('../utils');
 
 exports.signup = async (req, res, next) => {
   try {
@@ -55,7 +55,7 @@ exports.login = async (req, res, next) => {
       password: req.body.password
     };
 
-    const { valid, errors } = validateSignupData(user);
+    const { valid, errors } = validateLoginData(user);
 
     if (!valid) {
       return res.status(400).json(errors);
